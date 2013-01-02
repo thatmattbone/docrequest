@@ -1,0 +1,7 @@
+env
+*~
+*.pyc
+*.egg-info
+*.sqlite
+.idea
+redis/redis-*
