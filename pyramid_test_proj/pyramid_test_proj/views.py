@@ -10,9 +10,9 @@ def my_view(request):
     """
     return """Hello World"""
 
-@view_config(route_name='simple_post', renderer='string')
+@view_config(route_name='simple_request', renderer='string')
 @docrequest
-def simple_post(request, value1, value2):
+def simple_request(request, value1, value2):
     """
     A simple POST example.
 

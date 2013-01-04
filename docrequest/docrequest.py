@@ -32,7 +32,7 @@ def args_from_request(request, docrequest_definitions):
     if request.method == 'POST':
         params = request.POST
     elif request.method == 'GET':
-        params = request.GET
+        params = request.params
 
     deserialized = schema.deserialize(params)
 
