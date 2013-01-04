@@ -29,8 +29,8 @@ class ViewTests(unittest.TestCase):
         response = simple_post(request)
         self.assertEqual(expected_response, response)
 
-        expected_response = "two:<class 'str'>, 1:<class 'int'>"
-        request = testing.DummyRequest(post={'value1': 'two',
-                                             'value2': 2})
+        expected_response = "2:<class 'int'>, four:<class 'str'>"
+        request = testing.DummyRequest(post={'value1': 2,
+                                             'value2': 'four'})
         response = simple_post(request)
         self.assertEqual(expected_response, response)

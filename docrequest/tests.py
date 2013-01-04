@@ -26,6 +26,7 @@ class TestSchemaGeneration(unittest.TestCase):
 
         self.assertIsInstance(schema_node, colander.SchemaNode)
         self.assertIsInstance(schema_node.typ, colander.Int)
+        self.assertEqual(schema_node.name, "value1")
 
 
     def test_schema_node_for_line_str(self):
@@ -34,7 +35,7 @@ class TestSchemaGeneration(unittest.TestCase):
 
         self.assertIsInstance(schema_node, colander.SchemaNode)
         self.assertIsInstance(schema_node.typ, colander.Str)
-
+        self.assertEqual(schema_node.name, "value2")
 
 if __name__ == "__main__":
     unittest.main()

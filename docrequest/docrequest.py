@@ -16,13 +16,27 @@ def schema_node_for_line(line):
     variable_type = result.groupdict()['variable_type']
     
     if variable_type in schema_type_mappings:
-        return colander.SchemaNode(schema_type_mappings[variable_type]())
+        return colander.SchemaNode(schema_type_mappings[variable_type](),
+                                   name=variable_name)
     else:
         raise Exception("Uknown variable type {}".format(variable_type))
 
 
-def args_from_request(reqest, docrequest_definitions):
-    return [1, 'two']
+def args_from_request(request, docrequest_definitions):
+
+    schema = colander.SchemaNode(colander.Mapping())
+    for line in docrequest_definitions:
+        schema.add(schema_node_for_line(line))
+
+    params = None 
+    if request.method == 'POST':
+        params = request.POST
+    elif request.method == 'GET':
+        params = request.GET
+
+    deserialized = schema.deserialize(params)
+
+    return deserialized
 
 
 def docrequest(original_func):
@@ -48,9 +62,8 @@ def docrequest(original_func):
         
         if docrequest_definitions:
             args = args_from_request(request, docrequest_definitions)
-            args.insert(0, request)
             
-            context = original_func(*args)  # TODO support for kwargs, defaults, etc
+            context = original_func(request, **args)  # TODO support for args, defaults, etc
 
         else:
             context = original_func(request)
