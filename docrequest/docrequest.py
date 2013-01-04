@@ -21,9 +21,13 @@ def schema_node_for_line(line):
         raise Exception("Uknown variable type {}".format(variable_type))
 
 
+def args_from_request(reqest, docrequest_definitions):
+    return [1, 'two']
+
+
 def docrequest(original_func):
     """
-    Some stuff...
+    Decorator for docrequest-enabled view functions.
     """
     def new_func(request):
         
@@ -41,11 +45,15 @@ def docrequest(original_func):
             else:
                 if recording_docrequest_definitions and line:
                     docrequest_definitions.append(line)
+        
+        if docrequest_definitions:
+            args = args_from_request(request, docrequest_definitions)
+            args.insert(0, request)
+            
+            context = original_func(*args)  # TODO support for kwargs, defaults, etc
 
-        print(docrequest_definitions)
-    
-        #context = original_func(*args[1:], **kwargs)  # HACK the args[1:] is because of the implied root_factory arg
-        context = original_func(request)
+        else:
+            context = original_func(request)
 
         return context
 
