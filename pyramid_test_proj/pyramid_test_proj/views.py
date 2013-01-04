@@ -9,3 +9,18 @@ def my_view(request):
     My docstring.
     """
     return """Hello World"""
+
+@view_config(route_name='simple_post', renderer='string')
+@docrequest
+def simple_post(request, value1, value2):
+    """
+    A simple POST example.
+
+    docrequest:
+      - value1:int
+      - value2:str
+    """
+    response = "{value1}:{value1_type}, {value2}:{value2_type}"
+
+    return response.format(value1=value1, value1_type=str(type(value1)), 
+                           value2=value2, value2_type=str(type(value2)))
