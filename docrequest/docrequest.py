@@ -1,3 +1,4 @@
+import inspect
 import re
 import colander
 
@@ -22,13 +23,12 @@ def schema_node_for_line(line):
         raise Exception("Uknown variable type {}".format(variable_type))
 
 
-def args_from_request(request, docrequest_definitions):
-
+def args_from_request_pyramid(request, docrequest_definitions):
     schema = colander.SchemaNode(colander.Mapping())
     for line in docrequest_definitions:
         schema.add(schema_node_for_line(line))
 
-    params = None 
+    params = None
     if request.method == 'POST':
         params = request.POST
     elif request.method == 'GET':
@@ -39,40 +39,74 @@ def args_from_request(request, docrequest_definitions):
     return deserialized
 
 
-def docrequest(original_func):
-    """
-    Decorator for docrequest-enabled view functions.
-    """
-    def new_func(request):
+def args_from_request_django(request, docrequest_definitions):
+    schema = colander.SchemaNode(colander.Mapping())
+    for line in docrequest_definitions:
+        schema.add(schema_node_for_line(line))
+
+    params = None
+    if request.method == 'POST':
+        params = request.POST
+    elif request.method == 'GET':
+        params = request.GET
+
+    deserialized = schema.deserialize(params.dict())
+
+    return deserialized
+    
+
+class DocRequest(object):
+
+    def __init__(self, framework="pyramid"):
+        self.framework = framework
+
+
+    def __call__(self, original_func):
+        """
+        Decorator for docrequest-enabled view functions.
+        """
+
+        if not inspect.isfunction(original_func):
+            raise Exception("""{func} is not a function. It sucks, but for now you need to call the docrequest decorator with parens like this: @docrequest(). Could that be it?""".format(func=original_func))
         
-        docstring = original_func.__doc__
-        docstring = [line.strip() for line in docstring.split("\n")]
-        
-        recording_docrequest_definitions = None
-        docrequest_definitions = []
-        for line in docstring:
-            if line == "docrequest:":
-                if recording_docrequest_definitions == True:
-                    raise Exception("Two docrequest blocks detected!")
-                else:
-                    recording_docrequest_definitions = True
+        def new_func(request):
+            docstring = original_func.__doc__
+            if docstring is not None:
+                docstring = [line.strip() for line in docstring.split("\n")]
             else:
-                if recording_docrequest_definitions and line:
-                    docrequest_definitions.append(line)
-        
-        if docrequest_definitions:
-            args = args_from_request(request, docrequest_definitions)
-            
-            context = original_func(request, **args)  # TODO support for args, defaults, etc
+                docstring = []
 
-        else:
-            context = original_func(request)
+            recording_docrequest_definitions = None
+            docrequest_definitions = []
+            for line in docstring:
+                if line == "docrequest:":
+                    if recording_docrequest_definitions == True:
+                        raise Exception("Two docrequest blocks detected!")
+                    else:
+                        recording_docrequest_definitions = True
+                else:
+                    if recording_docrequest_definitions and line:
+                        docrequest_definitions.append(line)
 
-        return context
+            if docrequest_definitions:
+                # TODO refactor this, it's clunky and the code is copy-pasta
+                if self.framework == "pyramid":
+                    args = args_from_request_pyramid(request, docrequest_definitions)
+                elif self.framework == "django":
+                    args = args_from_request_django(request, docrequest_definitions)
+                else:
+                    raise Exception("Unknown framework {}".format(self.framework))
 
-    new_func.__name__ = original_func.__name__
-    new_func.__doc__ = original_func.__doc__
-    new_func.__dict__.update(original_func.__dict__)
+                context = original_func(request, **args)  # TODO support for args, defaults, etc
 
-    return new_func
+            else:
+                context = original_func(request)
 
+            return context
+
+        new_func.__name__ = original_func.__name__
+        new_func.__doc__ = original_func.__doc__
+        new_func.__dict__.update(original_func.__dict__)
+
+        return new_func
+docrequest = DocRequest

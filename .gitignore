@@ -5,3 +5,4 @@ env
 *.sqlite
 .idea
 redis/redis-*
+Django*

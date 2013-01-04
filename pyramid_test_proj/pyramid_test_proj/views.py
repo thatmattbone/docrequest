@@ -3,7 +3,7 @@ from pyramid.view import view_config
 from docrequest import docrequest
 
 @view_config(route_name='home', renderer='string')
-@docrequest
+@docrequest()
 def my_view(request):
     """
     My docstring.
@@ -11,7 +11,7 @@ def my_view(request):
     return """Hello World"""
 
 @view_config(route_name='simple_request', renderer='string')
-@docrequest
+@docrequest()
 def simple_request(request, value1, value2):
     """
     A simple POST example.
