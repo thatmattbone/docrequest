@@ -6,3 +6,4 @@ env
 .idea
 redis/redis-*
 Django*
+pyramid_test_proj/doc/_build

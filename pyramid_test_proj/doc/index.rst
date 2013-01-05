@@ -1,16 +1,17 @@
-.. docrequest_pyramid documentation master file, created by
-   sphinx-quickstart on Fri Jan  4 22:06:00 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+docrequest's pyramid test project documentation
+===============================================
 
-Welcome to docrequest_pyramid's documentation!
-==============================================
+View docs
 
-Contents:
+.. automodule:: pyramid_test_proj.views
+   :members: my_view, simple_request 
+
+
+Table of Contents
+=================
 
 .. toctree::
    :maxdepth: 2
-
 
 
 Indices and tables

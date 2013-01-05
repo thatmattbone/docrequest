@@ -2,10 +2,15 @@ import inspect
 import re
 import colander
 
-schema_type_mappings = {
+docrequest_schema_type_mappings = {
     'int': colander.Int,
     'str': colander.Str,
 }
+
+
+sphinx_schema_type_mappings = {
+    'integer': colander.Int,
+}    
 
 
 def schema_node_for_line(line):
@@ -16,8 +21,8 @@ def schema_node_for_line(line):
     variable_name = result.groupdict()['variable_name']
     variable_type = result.groupdict()['variable_type']
     
-    if variable_type in schema_type_mappings:
-        return colander.SchemaNode(schema_type_mappings[variable_type](),
+    if variable_type in docrequest_schema_type_mappings:
+        return colander.SchemaNode(docrequest_schema_type_mappings[variable_type](),
                                    name=variable_name)
     else:
         raise Exception("Uknown variable type {}".format(variable_type))
