@@ -15,7 +15,6 @@ def decorated_without_definitions(request):
     return """Hello World"""
 
 
-
 @view_config(route_name='simple_docrequest', renderer='string')
 @docrequest()
 def simple_docrequest(request, value1, value2):
@@ -42,6 +41,8 @@ def simple_docrequest_sphinx(request, value1, value2):
 
     :param int value1: the first value
     :param str value2: the second value
+    :param int<1,2,3> value3: choices value
+    :param [int] value4: list of values
     """
     response = "{value1}:{value1_type}, {value2}:{value2_type}"
 

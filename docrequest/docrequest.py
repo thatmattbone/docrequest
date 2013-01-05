@@ -2,16 +2,18 @@ import inspect
 import re
 import colander
 
-docrequest_schema_type_mappings = {
+DOCREQUEST_SCHEMA_TYPE_MAPPINGS = {
     'int': colander.Int,
     'str': colander.Str,
+    'float': colander.Float,
 }
 
 
-sphinx_schema_type_mappings = {
+SPHINX_SCHEMA_TYPE_MAPPINGS = {
     'int': colander.Int,
     'str': colander.Str,
-}    
+    'float': colander.Float,
+}
 
 
 DOCREQUEST_DEFINITION = re.compile("\W*-\W*(?P<variable_name>\w+):(?P<variable_type>\w+)")
@@ -29,49 +31,50 @@ def schema_node_for_line(line):
     variable_name = result.groupdict()['variable_name']
     variable_type = result.groupdict()['variable_type']
     
-    if variable_type in docrequest_schema_type_mappings:
-        return colander.SchemaNode(docrequest_schema_type_mappings[variable_type](),
+    if variable_type in DOCREQUEST_SCHEMA_TYPE_MAPPINGS:
+        return colander.SchemaNode(DOCREQUEST_SCHEMA_TYPE_MAPPINGS[variable_type](),
                                    name=variable_name)
     else:
-        raise Exception("Uknown variable type {}".format(variable_type))
+        raise Exception("Unknown variable type {}".format(variable_type))
 
 
-def args_from_request_pyramid(request, docrequest_definitions):
-    schema = colander.SchemaNode(colander.Mapping())
-    for line in docrequest_definitions:
-        schema.add(schema_node_for_line(line))
+class PyramidFrameworkAdapter(object):
+    def get_params_from_request(self, request):
+        params = None
+        if request.method == 'POST':
+            params = request.POST
+        elif request.method == 'GET':
+            params = request.params
+        else:
+            raise NotImplementedError("Unsupported HTTP method {}".format(request.method))
 
-    params = None
-    if request.method == 'POST':
-        params = request.POST
-    elif request.method == 'GET':
-        params = request.params
-
-    deserialized = schema.deserialize(params)
-
-    return deserialized
+        return params
 
 
-def args_from_request_django(request, docrequest_definitions):
-    schema = colander.SchemaNode(colander.Mapping())
-    for line in docrequest_definitions:
-        schema.add(schema_node_for_line(line))
+class DjangoFrameworkAdapter(object):
+    def get_params_from_request(self, request):
+        params = None
+        if request.method == 'POST':
+            params = request.POST
+        elif request.method == 'GET':
+            params = request.GET
+        else:
+            raise NotImplementedError("Unsupported HTTP method {}".format(request.method))
 
-    params = None
-    if request.method == 'POST':
-        params = request.POST
-    elif request.method == 'GET':
-        params = request.GET
-
-    deserialized = schema.deserialize(params.dict())
-
-    return deserialized
+        return params.dict()
     
 
 class DocRequest(object):
 
     def __init__(self, framework="pyramid"):
-        self.framework = framework
+
+        framework_adapters = {'pyramid': PyramidFrameworkAdapter,
+                              'django': DjangoFrameworkAdapter}
+
+        if framework in framework_adapters:
+            self.framework = framework_adapters[framework]()
+        else:
+            raise Exception("Unknown framework {}".format(framework))
 
 
     def __call__(self, original_func):
@@ -102,13 +105,12 @@ class DocRequest(object):
                         docrequest_definitions.append(line)
 
             if docrequest_definitions:
-                # TODO refactor this, it's clunky and the code is copy-pasta
-                if self.framework == "pyramid":
-                    args = args_from_request_pyramid(request, docrequest_definitions)
-                elif self.framework == "django":
-                    args = args_from_request_django(request, docrequest_definitions)
-                else:
-                    raise Exception("Unknown framework {}".format(self.framework))
+                schema = colander.SchemaNode(colander.Mapping())
+                for line in docrequest_definitions:
+                    schema.add(schema_node_for_line(line))
+
+                params = self.framework.get_params_from_request(request)
+                args = schema.deserialize(params)
 
                 context = original_func(request, **args)  # TODO support for args, defaults, etc
 

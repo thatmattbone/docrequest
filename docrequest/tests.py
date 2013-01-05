@@ -45,5 +45,18 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertIsInstance(schema_node.typ, colander.Str)
             self.assertEqual(schema_node.name, "value2")
 
+
+    def test_float(self):
+        lines = ["  - myfloat:float",
+                 " :param float myfloat: my description"]
+
+        for line in lines:
+            schema_node = schema_node_for_line(line)
+
+            self.assertIsInstance(schema_node, colander.SchemaNode)
+            self.assertIsInstance(schema_node.typ, colander.Float)
+            self.assertEqual(schema_node.name, "myfloat")
+
+
 if __name__ == "__main__":
     unittest.main()
