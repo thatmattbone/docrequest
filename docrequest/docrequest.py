@@ -9,12 +9,20 @@ docrequest_schema_type_mappings = {
 
 
 sphinx_schema_type_mappings = {
-    'integer': colander.Int,
+    'int': colander.Int,
+    'str': colander.Str,
 }    
 
 
+DOCREQUEST_DEFINITION = re.compile("\W*-\W*(?P<variable_name>\w+):(?P<variable_type>\w+)")
+SPHINX_DEFINITION = re.compile("\W*:param\W+(?P<variable_type>\w+)\W+(?P<variable_name>\w+):\W*(?P<variable_description>\w+)\W*")
+
 def schema_node_for_line(line):
-    result = re.match("\W*-\W*(?P<variable_name>\w+):(?P<variable_type>\w+)", line)
+    result = DOCREQUEST_DEFINITION.match(line)
+
+    if not result:
+        result = SPHINX_DEFINITION.match(line)
+    
     if not result:
         raise Exception("docrequest definition {line} is invalid.".format(line=line))
 

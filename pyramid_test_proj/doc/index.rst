@@ -4,7 +4,7 @@ docrequest's pyramid test project documentation
 View docs
 
 .. automodule:: pyramid_test_proj.views
-   :members: my_view, simple_request 
+   :members: decorated_without_definitions, simple_docrequest, simple_docrequest_sphinx
 
 
 Table of Contents

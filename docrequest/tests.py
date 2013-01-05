@@ -9,33 +9,41 @@ import colander
 
 class TestSchemaGeneration(unittest.TestCase):
     
-    def test_schema_node_for_line_failure(self):
+    def test_failure(self):
         line = "invalid"
         self.assertRaises(Exception, lambda: schema_node_for_line(line))
 
 
-    def test_schema_node_for_line_missing_mapping(self):
-        line = "  - foobar:fizzle"
+    def test_missing_mapping(self):
+        lines = ["  - foobar:fizzle",
+                 " :param foobar fizzle: my description"]
         
-        self.assertRaises(Exception, lambda: schema_node_for_line(line))
+        for line in lines:
+            self.assertRaises(Exception, lambda: schema_node_for_line(line))
 
 
-    def test_schema_node_for_line_int(self):
-        line = "  - value1:int"
-        schema_node = schema_node_for_line(line)
+    def test_int(self):
+        lines = ["  - value1:int",
+                 " :param int value1: my description"]
 
-        self.assertIsInstance(schema_node, colander.SchemaNode)
-        self.assertIsInstance(schema_node.typ, colander.Int)
-        self.assertEqual(schema_node.name, "value1")
+        for line in lines:
+            schema_node = schema_node_for_line(line)
+
+            self.assertIsInstance(schema_node, colander.SchemaNode)
+            self.assertIsInstance(schema_node.typ, colander.Int)
+            self.assertEqual(schema_node.name, "value1")
 
 
-    def test_schema_node_for_line_str(self):
-        line = "  - value2:str"
-        schema_node = schema_node_for_line(line)
+    def test_str(self):
+        lines = ["  - value2:str",
+                 " :param str value2: my description"]
 
-        self.assertIsInstance(schema_node, colander.SchemaNode)
-        self.assertIsInstance(schema_node.typ, colander.Str)
-        self.assertEqual(schema_node.name, "value2")
+        for line in lines:
+            schema_node = schema_node_for_line(line)
+
+            self.assertIsInstance(schema_node, colander.SchemaNode)
+            self.assertIsInstance(schema_node.typ, colander.Str)
+            self.assertEqual(schema_node.name, "value2")
 
 if __name__ == "__main__":
     unittest.main()
