@@ -38,10 +38,33 @@ class TestBase(object):
         cls.pid.kill()
         cls.pid.wait()
 
-
     def test_decorated_without_definitions(self):
         response = requests.get(self.path + "/decorated-without-definitions")
         self.assertEqual("Hello World", response.text)
+
+    def test_simple_docrequest(self):
+        endpoint = self.path + "/simple-docrequest"
+
+        response = requests.get(endpoint, params={'value1': '1',
+                                                  'value2': 'two'})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.text, """1:<class 'int'>, two:<class 'str'>""")
+
+        response = requests.get(endpoint, params={'value1': 'one',
+                                                  'value2': '2'})
+        self.assertEqual(500, response.status_code)
+
+    def test_simple_docrequest_sphinx(self):
+        endpoint = self.path + "/simple-docrequest-sphinx"
+
+        response = requests.get(endpoint, params={'value1': '1',
+                                                  'value2': 'two'})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.text, """1:<class 'int'>, two:<class 'str'>""")
+
+        response = requests.get(endpoint, params={'value1': 'one',
+                                                  'value2': '2'})
+        self.assertEqual(500, response.status_code)
 
 
 class DjangoIntegrationTest(TestBase, unittest.TestCase):

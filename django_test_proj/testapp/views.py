@@ -15,7 +15,7 @@ def decorated_without_definitions(request):
 
 
 @docrequest(framework="django")
-def simple_request(request, value1, value2):
+def simple_docrequest(request, value1, value2):
     """
     A simple POST example.
 
@@ -26,6 +26,24 @@ def simple_request(request, value1, value2):
     response = "{value1}:{value1_type}, {value2}:{value2_type}"
 
     response = response.format(value1=value1, value1_type=str(type(value1)), 
+                               value2=value2, value2_type=str(type(value2)))
+
+    return HttpResponse(response, content_type="text/plain")
+
+
+@docrequest(framework="django")
+def simple_docrequest_sphinx(request, value1, value2):
+    """
+    Simple example using sphinx syntax.
+
+    docrequest:
+
+    :param int value1: the first value
+    :param str value2: the second value
+    """
+    response = "{value1}:{value1_type}, {value2}:{value2_type}"
+
+    response = response.format(value1=value1, value1_type=str(type(value1)),
                                value2=value2, value2_type=str(type(value2)))
 
     return HttpResponse(response, content_type="text/plain")

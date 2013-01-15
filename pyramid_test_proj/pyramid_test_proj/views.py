@@ -41,10 +41,12 @@ def simple_docrequest_sphinx(request, value1, value2):
 
     :param int value1: the first value
     :param str value2: the second value
-    :param int<1,2,3> value3: choices value
-    :param [int] value4: list of values
     """
     response = "{value1}:{value1_type}, {value2}:{value2_type}"
 
     return response.format(value1=value1, value1_type=str(type(value1)), 
                            value2=value2, value2_type=str(type(value2)))
+
+
+#    :param int<1,2,3> value3: choices value
+#    :param [int] value4: list of values
