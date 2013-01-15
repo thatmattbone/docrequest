@@ -2,9 +2,16 @@ from django.http import HttpResponse
 
 from docrequest import docrequest
 
+
 @docrequest(framework="django")
-def my_view(request):
-    return HttpResponse("hello world", content_type="text/plain")
+def decorated_without_definitions(request):
+    """
+    A view decorated with `@docrequest()` that does not define any
+    parameters.
+
+    This should run just like normal.
+    """
+    return HttpResponse("Hello World", content_type="text/plain")
 
 
 @docrequest(framework="django")
