@@ -18,15 +18,19 @@ class TestBase(object):
 
     @classmethod
     def setUpClass(cls):
+        # fork off our framework's dev server
         cls.pid = subprocess.Popen([sys.executable] + cls.args,
-                                   cwd=cls.cwd)
+                                   cwd=cls.cwd,
+                                   stdout=subprocess.DEVNULL,
+                                   stderr=subprocess.DEVNULL)
 
+        # try to request the root url MAX_TRIES times to make sure the dev server has started
         for i in range(cls.MAX_TRIES):
             try:
                 requests.get(cls.path)
                 break
-            except:
-                print("sleep!")
+            except requests.ConnectionError:
+                # sleep if we can't make the connection yet
                 time.sleep(1)
 
     @classmethod
@@ -37,18 +41,17 @@ class TestBase(object):
 
     def test_decorated_without_definitions(self):
         response = requests.get(self.path + "/decorated-without-definitions")
-        import pdb; pdb.set_trace()
         self.assertEqual("Hello World", response.text)
 
 
-class DjangoIntegrationTest(unittest.TestCase, TestBase):
+class DjangoIntegrationTest(TestBase, unittest.TestCase):
 
     path = "http://localhost:8000"
     args = ["manage.py", "runserver"]
     cwd = "../django_test_proj"
 
 
-class PyramidIntegrationTest(unittest.TestCase, TestBase):
+class PyramidIntegrationTest(TestBase, unittest.TestCase):
 
     path = "http://localhost:6543"
     args = ["pserve.py", "development.ini"]
