@@ -42,7 +42,7 @@ class TestBase(object):
         response = requests.get(self.path + "/decorated-without-definitions")
         self.assertEqual("Hello World", response.text)
 
-    def test_simple_docrequest(self):
+    def test_simple_docrequest_get(self):
         endpoint = self.path + "/simple-docrequest"
 
         response = requests.get(endpoint, params={'value1': '1',
@@ -54,7 +54,19 @@ class TestBase(object):
                                                   'value2': '2'})
         self.assertEqual(500, response.status_code)
 
-    def test_simple_docrequest_sphinx(self):
+    def test_simple_docrequest_post(self):
+        endpoint = self.path + "/simple-docrequest"
+
+        response = requests.post(endpoint, data={'value1': '1',
+                                                 'value2': 'two'})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.text, """1:<class 'int'>, two:<class 'str'>""")
+
+        response = requests.post(endpoint, data={'value1': 'one',
+                                                 'value2': '2'})
+        self.assertEqual(500, response.status_code)
+
+    def test_simple_docrequest_sphinx_get(self):
         endpoint = self.path + "/simple-docrequest-sphinx"
 
         response = requests.get(endpoint, params={'value1': '1',
@@ -64,6 +76,18 @@ class TestBase(object):
 
         response = requests.get(endpoint, params={'value1': 'one',
                                                   'value2': '2'})
+        self.assertEqual(500, response.status_code)
+
+    def test_simple_docrequest_sphinx_post(self):
+        endpoint = self.path + "/simple-docrequest-sphinx"
+
+        response = requests.post(endpoint, data={'value1': '1',
+                                                 'value2': 'two'})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.text, """1:<class 'int'>, two:<class 'str'>""")
+
+        response = requests.post(endpoint, data={'value1': 'one',
+                                                 'value2': '2'})
         self.assertEqual(500, response.status_code)
 
 

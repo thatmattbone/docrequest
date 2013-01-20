@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from docrequest import docrequest
 
@@ -13,7 +14,7 @@ def decorated_without_definitions(request):
     """
     return HttpResponse("Hello World", content_type="text/plain")
 
-
+@csrf_exempt
 @docrequest(framework="django")
 def simple_docrequest(request, value1, value2):
     """
@@ -30,7 +31,7 @@ def simple_docrequest(request, value1, value2):
 
     return HttpResponse(response, content_type="text/plain")
 
-
+@csrf_exempt
 @docrequest(framework="django")
 def simple_docrequest_sphinx(request, value1, value2):
     """
