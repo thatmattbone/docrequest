@@ -5,9 +5,14 @@ import pyparsing
 import colander
 
 SCHEMA_TYPE_MAPPINGS = {
-    'int': colander.Int,
-    'str': colander.Str,
-    'float': colander.Float,
+    'int': {'colander_class': colander.Int,
+            'to_python': lambda x: int(x) },
+
+    'str': {'colander_class': colander.Str,
+            'to_python': lambda x: str(x) },
+
+    'float': {'colander_class': colander.Float,
+              'to_python': lambda x: float(x) },
 }
 
 
@@ -16,7 +21,7 @@ SPHINX_DEFINITION = re.compile("\W*:param\W+(?P<variable_type>\w+)\W+(?P<variabl
 
 docrequest_type = (pyparsing.Keyword('int') | pyparsing.Keyword('str') | pyparsing.Keyword('float'))\
     .setResultsName('docrequest_type')
-docrequest_choices = (pyparsing.Literal(":<") + "fuck" +">")\
+docrequest_choices = (pyparsing.Literal("<") + pyparsing.delimitedList(pyparsing.Word(initChars=pyparsing.alphanums, bodyChars=pyparsing.alphanums), combine=False) +">")\
     .setResultsName('docrequest_choices')
 docrequest_type_with_choices = (docrequest_type + docrequest_choices)\
     .setResultsName('docrequest_type_with_choices')
@@ -26,13 +31,13 @@ docrequest_description = pyparsing.OneOrMore(pyparsing.Word(initChars=pyparsing.
     .setResultsName('docrequest_definition')
 docrequest_variable = pyparsing.Word(initChars=pyparsing.alphas, bodyChars=pyparsing.alphanums)\
     .setResultsName('docrequest_variable')
-#docrequest_schema =  (docrequest_list_type|docrequest_type_with_choices|docrequest_type)
-docrequest_schema = docrequest_type
+docrequest_schema =  (docrequest_list_type|docrequest_type_with_choices|docrequest_type)
 
 docrequest_sphinx = pyparsing.Literal(":") + "param" + docrequest_schema + docrequest_variable + ":" + docrequest_description
 docrequest_docrequest = pyparsing.Literal("-") + docrequest_variable + ":" + docrequest_schema
 
 docrequest_grammar = docrequest_sphinx|docrequest_docrequest
+
 
 def schema_node_for_line(line):
 
@@ -43,10 +48,20 @@ def schema_node_for_line(line):
     variable_name = match_dict['docrequest_variable']
 
     if variable_type in SCHEMA_TYPE_MAPPINGS:
-        return colander.SchemaNode(SCHEMA_TYPE_MAPPINGS[variable_type](),
-                                   name=variable_name)
+        schema_node = colander.SchemaNode(SCHEMA_TYPE_MAPPINGS[variable_type]['colander_class'](),
+                                          name=variable_name)
     else:
         raise Exception("Unknown variable type {}".format(variable_type))
+
+    if 'docrequest_choices' in match_dict:
+        to_python = SCHEMA_TYPE_MAPPINGS[variable_type]['to_python']
+        schema_node.validator = colander.OneOf([to_python(x) for x in match_dict['docrequest_choices'][1:-1]])
+
+    if 'docrequest_list_type' in match_dict:
+        child_node = schema_node
+        schema_node = colander.SchemaNode(colander.Sequence(), child_node, accept_scalar=True, name=variable_name)
+
+    return schema_node
 
 
 class PyramidFrameworkAdapter(object):
