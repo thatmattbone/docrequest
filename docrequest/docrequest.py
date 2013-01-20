@@ -1,15 +1,10 @@
 import inspect
 import re
+
+import pyparsing
 import colander
 
-DOCREQUEST_SCHEMA_TYPE_MAPPINGS = {
-    'int': colander.Int,
-    'str': colander.Str,
-    'float': colander.Float,
-}
-
-
-SPHINX_SCHEMA_TYPE_MAPPINGS = {
+SCHEMA_TYPE_MAPPINGS = {
     'int': colander.Int,
     'str': colander.Str,
     'float': colander.Float,
@@ -19,20 +14,36 @@ SPHINX_SCHEMA_TYPE_MAPPINGS = {
 DOCREQUEST_DEFINITION = re.compile("\W*-\W*(?P<variable_name>\w+):(?P<variable_type>\w+)")
 SPHINX_DEFINITION = re.compile("\W*:param\W+(?P<variable_type>\w+)\W+(?P<variable_name>\w+):\W*(?P<variable_description>\w+)\W*")
 
+docrequest_type = (pyparsing.Keyword('int') | pyparsing.Keyword('str') | pyparsing.Keyword('float'))\
+    .setResultsName('docrequest_type')
+docrequest_choices = (pyparsing.Literal(":<") + "fuck" +">")\
+    .setResultsName('docrequest_choices')
+docrequest_type_with_choices = (docrequest_type + docrequest_choices)\
+    .setResultsName('docrequest_type_with_choices')
+docrequest_list_type = (pyparsing.Literal("[") + (docrequest_type_with_choices|docrequest_type) + "]")\
+    .setResultsName("docrequest_list_type")
+docrequest_description = pyparsing.OneOrMore(pyparsing.Word(initChars=pyparsing.alphanums, bodyChars=pyparsing.alphanums))\
+    .setResultsName('docrequest_definition')
+docrequest_variable = pyparsing.Word(initChars=pyparsing.alphas, bodyChars=pyparsing.alphanums)\
+    .setResultsName('docrequest_variable')
+#docrequest_schema =  (docrequest_list_type|docrequest_type_with_choices|docrequest_type)
+docrequest_schema = docrequest_type
+
+docrequest_sphinx = pyparsing.Literal(":") + "param" + docrequest_schema + docrequest_variable + ":" + docrequest_description
+docrequest_docrequest = pyparsing.Literal("-") + docrequest_variable + ":" + docrequest_schema
+
+docrequest_grammar = docrequest_sphinx|docrequest_docrequest
+
 def schema_node_for_line(line):
-    result = DOCREQUEST_DEFINITION.match(line)
 
-    if not result:
-        result = SPHINX_DEFINITION.match(line)
-    
-    if not result:
-        raise Exception("docrequest definition {line} is invalid.".format(line=line))
+    matches = docrequest_grammar.parseString(line)
+    match_dict = matches.asDict()
 
-    variable_name = result.groupdict()['variable_name']
-    variable_type = result.groupdict()['variable_type']
-    
-    if variable_type in DOCREQUEST_SCHEMA_TYPE_MAPPINGS:
-        return colander.SchemaNode(DOCREQUEST_SCHEMA_TYPE_MAPPINGS[variable_type](),
+    variable_type = match_dict['docrequest_type']
+    variable_name = match_dict['docrequest_variable']
+
+    if variable_type in SCHEMA_TYPE_MAPPINGS:
+        return colander.SchemaNode(SCHEMA_TYPE_MAPPINGS[variable_type](),
                                    name=variable_name)
     else:
         raise Exception("Unknown variable type {}".format(variable_type))
@@ -83,7 +94,7 @@ class DocRequest(object):
         """
 
         if not inspect.isfunction(original_func):
-            raise Exception("""{func} is not a function. It sucks, but for now you need to call the docrequest decorator with parens like this: @docrequest(). Could that be it?""".format(func=original_func))
+            raise Exception("""{func} is not a function.""".format(func=original_func))
         
         def new_func(request):
             docstring = original_func.__doc__
@@ -119,6 +130,7 @@ class DocRequest(object):
 
             return context
 
+        #TODO replace with functools wraps?
         new_func.__name__ = original_func.__name__
         new_func.__doc__ = original_func.__doc__
         new_func.__dict__.update(original_func.__dict__)
