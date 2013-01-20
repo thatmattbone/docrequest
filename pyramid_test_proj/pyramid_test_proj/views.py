@@ -1,13 +1,13 @@
 from pyramid.view import view_config
 
-from docrequest import docrequest
+from docrequest import docrequest_pyramid as docrequest
 
 
 @view_config(route_name='decorated_without_definitions', renderer='string')
-@docrequest()
+@docrequest
 def decorated_without_definitions(request):
     """
-    A view decorated with `@docrequest()` that does not define any
+    A view decorated with `@docrequest` that does not define any
     parameters.
 
     This should run just like normal.
@@ -16,7 +16,7 @@ def decorated_without_definitions(request):
 
 
 @view_config(route_name='simple_docrequest', renderer='string')
-@docrequest()
+@docrequest
 def simple_docrequest(request, value1, value2):
     """
     Simple example using docrequest syntax.
@@ -32,7 +32,7 @@ def simple_docrequest(request, value1, value2):
 
 
 @view_config(route_name='simple_docrequest_sphinx', renderer='string')
-@docrequest()
+@docrequest
 def simple_docrequest_sphinx(request, value1, value2):
     """
     Simple example using sphinx syntax.

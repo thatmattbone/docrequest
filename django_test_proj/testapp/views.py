@@ -1,10 +1,10 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from docrequest import docrequest
+from docrequest import docrequest_django as docrequest
 
 
-@docrequest(framework="django")
+@docrequest
 def decorated_without_definitions(request):
     """
     A view decorated with `@docrequest()` that does not define any
@@ -15,7 +15,7 @@ def decorated_without_definitions(request):
     return HttpResponse("Hello World", content_type="text/plain")
 
 @csrf_exempt
-@docrequest(framework="django")
+@docrequest
 def simple_docrequest(request, value1, value2):
     """
     A simple POST example.
@@ -32,7 +32,7 @@ def simple_docrequest(request, value1, value2):
     return HttpResponse(response, content_type="text/plain")
 
 @csrf_exempt
-@docrequest(framework="django")
+@docrequest
 def simple_docrequest_sphinx(request, value1, value2):
     """
     Simple example using sphinx syntax.

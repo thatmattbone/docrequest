@@ -124,4 +124,6 @@ class DocRequest(object):
         new_func.__dict__.update(original_func.__dict__)
 
         return new_func
-docrequest = DocRequest
+
+docrequest_pyramid = DocRequest(framework="pyramid")
+docrequest_django = DocRequest(framework="django")
