@@ -15,13 +15,9 @@ SCHEMA_TYPE_MAPPINGS = {
               'to_python': lambda x: float(x) },
 }
 
-
-DOCREQUEST_DEFINITION = re.compile("\W*-\W*(?P<variable_name>\w+):(?P<variable_type>\w+)")
-SPHINX_DEFINITION = re.compile("\W*:param\W+(?P<variable_type>\w+)\W+(?P<variable_name>\w+):\W*(?P<variable_description>\w+)\W*")
-
 docrequest_type = (pyparsing.Keyword('int') | pyparsing.Keyword('str') | pyparsing.Keyword('float'))\
     .setResultsName('docrequest_type')
-docrequest_choices = (pyparsing.Literal("<") + pyparsing.delimitedList(pyparsing.Word(initChars=pyparsing.alphanums, bodyChars=pyparsing.alphanums), combine=False) +">")\
+docrequest_choices = (pyparsing.Literal("<") + pyparsing.delimitedList(pyparsing.Word(initChars=pyparsing.alphanums, bodyChars=pyparsing.alphanums + "."), combine=False) +">")\
     .setResultsName('docrequest_choices')
 docrequest_type_with_choices = (docrequest_type + docrequest_choices)\
     .setResultsName('docrequest_type_with_choices')

@@ -90,6 +90,30 @@ class TestBase(object):
                                                  'value2': '2'})
         self.assertEqual(500, response.status_code)
 
+    def test_choices_docrequest(self):
+        endpoint = self.path + "/choices-docrequest"
+
+        response = requests.get(endpoint, params={'intchoice': '5',
+                                                  'strchoice': 'foo',
+                                                  'floatchoice': '42.42'})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.json()['intchoice'], 5)
+        self.assertEqual(response.json()['strchoice'], 'foo')
+        self.assertEqual(response.json()['floatchoice'], 42.42)
+
+    def test_choices_docrequest_shpinx(self):
+        endpoint = self.path + "/choices-docrequest-sphinx"
+
+        response = requests.get(endpoint, params={'intchoice': '5',
+                                                  'strchoice': 'foo',
+                                                  'floatchoice': '42.42'})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.json()['intchoice'], 5)
+        self.assertEqual(response.json()['strchoice'], 'foo')
+        self.assertEqual(response.json()['floatchoice'], 42.42)
+
 
 class DjangoIntegrationTest(TestBase, unittest.TestCase):
 

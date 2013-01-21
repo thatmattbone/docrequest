@@ -84,6 +84,32 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertEqual(schema_node.validator.choices, [1, 2, 3])
             self.assertEqual(schema_node.name, "myintchoices")
 
+    def test_choices_str(self):
+        lines = [" - mystrchoices:str<foo, bar, baz>",
+                 ":param str<foo, bar, baz> mystrchoices: my string choices"]
+
+        for line in lines:
+            schema_node = schema_node_for_line(line)
+
+            self.assertIsInstance(schema_node, colander.SchemaNode)
+            self.assertIsInstance(schema_node.typ, colander.Str)
+            self.assertIsInstance(schema_node.validator, colander.OneOf)
+            self.assertEqual(schema_node.validator.choices, ['foo', 'bar', 'baz'])
+            self.assertEqual(schema_node.name, "mystrchoices")
+
+    def test_choices_float(self):
+        lines = [" - myfloatchoices:float<42.42, 39.39, 52.52>",
+                 ":param float<42.42, 39.39, 52.52> myfloatchoices: my float choices"]
+
+        for line in lines:
+            schema_node = schema_node_for_line(line)
+
+            self.assertIsInstance(schema_node, colander.SchemaNode)
+            self.assertIsInstance(schema_node.typ, colander.Float)
+            self.assertIsInstance(schema_node.validator, colander.OneOf)
+            self.assertEqual(schema_node.validator.choices, [42.42, 39.39, 52.52])
+            self.assertEqual(schema_node.name, "myfloatchoices")
+
 
 if __name__ == "__main__":
     unittest.main()

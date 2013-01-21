@@ -47,6 +47,37 @@ def simple_docrequest_sphinx(request, value1, value2):
     return response.format(value1=value1, value1_type=str(type(value1)), 
                            value2=value2, value2_type=str(type(value2)))
 
+@view_config(route_name='choices_docrequest', renderer='json')
+@docrequest
+def choices_docrequest(request, intchoice, strchoice, floatchoice):
+    """
+    Demonstrating the docrequest choices syntax.
 
-#    :param int<1,2,3> value3: choices value
+    docrequest:
+     - intchoice:int<2,3,5,7>
+     - strchoice:str<foo, bar, baz>
+     - floatchoice:float<39.39, 42.42>
+    """
+    return {'intchoice': intchoice,
+            'strchoice': strchoice,
+            'floatchoice': floatchoice}
+
+
+@view_config(route_name='choices_docrequest_sphinx', renderer='json')
+@docrequest
+def choices_docrequest_sphinx(request, intchoice, strchoice, floatchoice):
+    """
+    Demonstrating the choices syntax, sphinx version.
+
+    docrequest:
+
+    :param int<2,3,5,7> intchoice: an integer
+    :param str<foo, bar, baz> strchoice: a str
+    :param float<39.39, 42.42> floatchoice: a float
+    """
+    return {'intchoice': intchoice,
+            'strchoice': strchoice,
+            'floatchoice': floatchoice}
+
+
 #    :param [int] value4: list of values
