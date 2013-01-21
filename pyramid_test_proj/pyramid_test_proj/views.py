@@ -80,4 +80,36 @@ def choices_docrequest_sphinx(request, intchoice, strchoice, floatchoice):
             'floatchoice': floatchoice}
 
 
-#    :param [int] value4: list of values
+@view_config(route_name='list_docrequest', renderer='json')
+@docrequest
+def list_docrequest(request, intlist, strlist, floatlist):
+    """
+    Demonstrating the list syntax, sphinx version.
+
+    docrequest:
+     - intlist:[int]
+     - strlist:[str]
+     - floatlist:[float]
+    """
+    #import pdb; pdb.set_trace()
+    return {'intlist': intlist,
+            'strlist': strlist,
+            'floatlist': floatlist
+    }
+
+
+@view_config(route_name='list_docrequest_sphinx', renderer='json')
+@docrequest
+def list_docrequest_sphinx(request, intlist, strlist, floatlist):
+    """
+    Demonstrating the list syntax, sphinx version.
+
+    docrequest:
+
+    :param [int] intlist: an integer
+    :param [str] strlist: a str
+    :param [float] floatlist: a float
+    """
+    return {'intlist': intlist,
+            'strlist': strlist,
+            'floatlist': floatlist}

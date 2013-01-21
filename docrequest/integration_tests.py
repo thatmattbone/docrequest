@@ -114,6 +114,19 @@ class TestBase(object):
         self.assertEqual(response.json()['strchoice'], 'foo')
         self.assertEqual(response.json()['floatchoice'], 42.42)
 
+    def test_list_docrequest(self):
+        endpoint = self.path + "/list-docrequest"
+
+        response = requests.get(endpoint, params={'intlist': ['5', '6'],
+                                                  'strlist': ['foo'],
+                                                  'floatlist':['42.42', '39.39']})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.json()['intchoice'], [5, 6])
+        self.assertEqual(response.json()['strchoice'], ['foo'])
+        self.assertEqual(response.json()['floatchoice'], [42.42, 39.39])
+
+
 
 class DjangoIntegrationTest(TestBase, unittest.TestCase):
 

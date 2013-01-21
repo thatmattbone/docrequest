@@ -81,3 +81,34 @@ def choices_docrequest_sphinx(request, intchoice, strchoice, floatchoice):
     return HttpResponse(json.dumps({'intchoice': intchoice,
                                     'strchoice': strchoice,
                                     'floatchoice': floatchoice}), content_type="application/json")
+
+
+@docrequest
+def list_docrequest(request, intlist, strlist, floatlist):
+    """
+    Demonstrating the list syntax, sphinx version.
+
+    docrequest:
+     - intlist:[int]
+     - strlist:[str]
+     - floatlist:[float]
+    """
+    return HttpResponse(json.dumps({'intlist': intlist,
+                                    'strlist': strlist,
+                                    'floatlist': floatlist}), content_type="application/json")
+
+
+@docrequest
+def list_docrequest_sphinx(request, intlist, strlist, floatlist):
+    """
+    Demonstrating the list syntax, sphinx version.
+
+    docrequest:
+
+    :param [int] intlist: an integer
+    :param [str] strlist: a str
+    :param [float] floatlist: a float
+    """
+    return HttpResponse(json.dumps({'intlist': intlist,
+                                    'strlist': strlist,
+                                    'floatlist': floatlist}), content_type="application/json")
