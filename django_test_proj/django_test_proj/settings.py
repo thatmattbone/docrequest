@@ -1,11 +1,11 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = ( )
+ADMINS = ()
 
 MANAGERS = ADMINS
 
-DATABASES = { }
+#DATABASES = {}
 
 TIME_ZONE = 'America/Chicago'
 
@@ -53,10 +53,10 @@ ROOT_URLCONF = 'django_test_proj.urls'
 
 WSGI_APPLICATION = 'django_test_proj.wsgi.application'
 
-TEMPLATE_DIRS = ( )
+TEMPLATE_DIRS = ()
 
 INSTALLED_APPS = (
     'testapp',
 )
 
-LOGGING = { }
+LOGGING = {}
