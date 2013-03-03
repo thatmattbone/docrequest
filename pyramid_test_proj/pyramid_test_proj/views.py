@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 
 from docrequest import docrequest_pyramid as docrequest
+from docrequest import readable_type
 
 
 @view_config(route_name='decorated_without_definitions', renderer='string')
@@ -15,7 +16,7 @@ def decorated_without_definitions(request):
     return """Hello World"""
 
 
-@view_config(route_name='simple_docrequest', renderer='string')
+@view_config(route_name='simple_docrequest', renderer='json')
 @docrequest
 def simple_docrequest(request, value1, value2):
     """
@@ -25,13 +26,13 @@ def simple_docrequest(request, value1, value2):
       - value1:int
       - value2:str
     """
-    response = "{value1}:{value1_type}, {value2}:{value2_type}"
+    return {'value1': {'value': value1,
+                       'type': readable_type(value1)},
+            'value2': {'value': value2,
+                       'type': readable_type(value2)}}
 
-    return response.format(value1=value1, value1_type=str(type(value1)), 
-                           value2=value2, value2_type=str(type(value2)))
 
-
-@view_config(route_name='simple_docrequest_sphinx', renderer='string')
+@view_config(route_name='simple_docrequest_sphinx', renderer='json')
 @docrequest
 def simple_docrequest_sphinx(request, value1, value2):
     """
@@ -42,10 +43,11 @@ def simple_docrequest_sphinx(request, value1, value2):
     :param int value1: the first value
     :param str value2: the second value
     """
-    response = "{value1}:{value1_type}, {value2}:{value2_type}"
+    return {'value1': {'value': value1,
+                       'type': readable_type(value1)},
+            'value2': {'value': value2,
+                       'type': readable_type(value2)}}
 
-    return response.format(value1=value1, value1_type=str(type(value1)), 
-                           value2=value2, value2_type=str(type(value2)))
 
 @view_config(route_name='choices_docrequest', renderer='json')
 @docrequest
@@ -91,7 +93,6 @@ def list_docrequest(request, intlist, strlist, floatlist):
      - strlist:[str]
      - floatlist:[float]
     """
-    #import pdb; pdb.set_trace()
     return {'intlist': intlist,
             'strlist': strlist,
             'floatlist': floatlist

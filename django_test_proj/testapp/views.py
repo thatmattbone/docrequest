@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from docrequest import docrequest_django as docrequest
-
+from docrequest import readable_type
 
 @docrequest
 def decorated_without_definitions(request):
@@ -26,12 +26,12 @@ def simple_docrequest(request, value1, value2):
       - value1:int
       - value2:str
     """
-    response = "{value1}:{value1_type}, {value2}:{value2_type}"
+    response = json.dumps({'value1': {'value': value1,
+                                      'type': readable_type(value1)},
+                           'value2': {'value': value2,
+                                      'type': readable_type(value2)}})
 
-    response = response.format(value1=value1, value1_type=str(type(value1)), 
-                               value2=value2, value2_type=str(type(value2)))
-
-    return HttpResponse(response, content_type="text/plain")
+    return HttpResponse(response, content_type="application/json")
 
 @csrf_exempt
 @docrequest
@@ -44,12 +44,12 @@ def simple_docrequest_sphinx(request, value1, value2):
     :param int value1: the first value
     :param str value2: the second value
     """
-    response = "{value1}:{value1_type}, {value2}:{value2_type}"
+    response = json.dumps({'value1': {'value': value1,
+                                      'type': readable_type(value1)},
+                           'value2': {'value': value2,
+                                      'type': readable_type(value2)}})
 
-    response = response.format(value1=value1, value1_type=str(type(value1)),
-                               value2=value2, value2_type=str(type(value2)))
-
-    return HttpResponse(response, content_type="text/plain")
+    return HttpResponse(response, content_type="application/json")
 
 
 @docrequest

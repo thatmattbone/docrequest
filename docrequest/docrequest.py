@@ -98,7 +98,6 @@ class DocRequest(object):
         else:
             raise Exception("Unknown framework {}".format(framework))
 
-
     def __call__(self, original_func):
         """
         Decorator for docrequest-enabled view functions.
@@ -150,3 +149,14 @@ class DocRequest(object):
 
 docrequest_pyramid = DocRequest(framework="pyramid")
 docrequest_django = DocRequest(framework="django")
+
+
+def readable_type(obj):
+    """
+    Return a readable type of the obj that's independent of python 2 vs 3.
+    """
+    if isinstance(obj, type(0)):
+        return 'int'
+    elif isinstance(obj, type(u"")):
+        return 'str'
+
