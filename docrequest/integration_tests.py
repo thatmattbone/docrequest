@@ -36,7 +36,7 @@ class TestBase(object):
 
     @classmethod
     def tearDownClass(cls):
-        cls.pid.kill()
+        cls.pid.terminate()
         cls.pid.wait()
 
     def response_funcs(self):
@@ -145,7 +145,7 @@ class TestBase(object):
 class DjangoIntegrationTest(TestBase, unittest.TestCase):
 
     path = "http://localhost:8000"
-    args = ["manage.py", "runserver"]
+    args = ["manage.py", "runserver", "--noreload"]
     cwd = "../django_test_proj"
 
 
