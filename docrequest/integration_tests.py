@@ -39,121 +39,107 @@ class TestBase(object):
         cls.pid.kill()
         cls.pid.wait()
 
+    def response_funcs(self):
+
+        def get_func(url, params={}):
+            return requests.get(url, params=params)
+
+        def post_func(url, params={}):
+            return requests.post(url, data=params)
+
+        yield get_func
+        yield post_func
+
     def test_decorated_without_definitions(self):
-        response = requests.get(self.path + "/decorated-without-definitions")
-        self.assertEqual("Hello World", response.text)
+        for response_func in self.response_funcs():
+            response = response_func(self.path + "/decorated-without-definitions")
+            self.assertEqual("Hello World", response.text)
 
-    def test_simple_docrequest_get(self):
-        endpoint = self.path + "/simple-docrequest"
+    def test_simple_docrequest(self):
+        for response_func in self.response_funcs():
 
-        response = requests.get(endpoint, params={'value1': '1',
-                                                  'value2': 'two'})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json(),
-                         {'value1': {'value': 1,
-                                     'type': 'int'},
-                          'value2': {'value': u'two',
-                                     'type': 'str'}})
+            endpoint = self.path + "/simple-docrequest"
 
-        response = requests.get(endpoint, params={'value1': 'one',
-                                                  'value2': 'two'})
-        self.assertEqual(500, response.status_code)
+            response = response_func(endpoint, {'value1': '1',
+                                                'value2': 'two'})
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(response.json(), {'value1': {'value': 1,
+                                                          'type': 'int'},
+                                               'value2': {'value': u'two',
+                                                          'type': 'str'}})
 
-    def test_simple_docrequest_post(self):
-        endpoint = self.path + "/simple-docrequest"
+            response = response_func(endpoint, {'value1': 'one',
+                                                'value2': 'two'})
+            self.assertEqual(500, response.status_code)
 
-        response = requests.post(endpoint, data={'value1': '1',
-                                                 'value2': 'two'})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json(),
-                         {'value1': {'value': 1,
-                                     'type': 'int'},
-                          'value2': {'value': u'two',
-                                     'type': 'str'}})
+    def test_simple_docrequest_sphinx(self):
+        for response_func in self.response_funcs():
+            endpoint = self.path + "/simple-docrequest-sphinx"
 
-        response = requests.post(endpoint, data={'value1': 'one',
-                                                 'value2': 'two'})
-        self.assertEqual(500, response.status_code)
+            response = response_func(endpoint, {'value1': '1',
+                                                'value2': 'two'})
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(response.json(),
+                             {'value1': {'value': 1,
+                                         'type': 'int'},
+                              'value2': {'value': u'two',
+                                         'type': 'str'}})
 
-    def test_simple_docrequest_sphinx_get(self):
-        endpoint = self.path + "/simple-docrequest-sphinx"
-
-        response = requests.get(endpoint, params={'value1': '1',
-                                                  'value2': 'two'})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json(),
-                         {'value1': {'value': 1,
-                                     'type': 'int'},
-                          'value2': {'value': u'two',
-                                     'type': 'str'}})
-
-        response = requests.get(endpoint, params={'value1': 'one',
-                                                  'value2': '2'})
-        self.assertEqual(500, response.status_code)
-
-    def test_simple_docrequest_sphinx_post(self):
-        endpoint = self.path + "/simple-docrequest-sphinx"
-
-        response = requests.post(endpoint, data={'value1': '1',
-                                                 'value2': 'two'})
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json(),
-                         {'value1': {'value': 1,
-                                     'type': 'int'},
-                          'value2': {'value': u'two',
-                                     'type': 'str'}})
-
-        response = requests.post(endpoint, data={'value1': 'one',
-                                                 'value2': '2'})
-        self.assertEqual(500, response.status_code)
+            response = response_func(endpoint, {'value1': 'one',
+                                                'value2': '2'})
+            self.assertEqual(500, response.status_code)
 
     def test_choices_docrequest(self):
-        endpoint = self.path + "/choices-docrequest"
+        for response_func in self.response_funcs():
+            endpoint = self.path + "/choices-docrequest"
 
-        response = requests.get(endpoint, params={'intchoice': '5',
-                                                  'strchoice': 'foo',
-                                                  'floatchoice': '42.42'})
+            response = response_func(endpoint, {'intchoice': '5',
+                                                'strchoice': 'foo',
+                                                'floatchoice': '42.42'})
 
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json()['intchoice'], 5)
-        self.assertEqual(response.json()['strchoice'], 'foo')
-        self.assertEqual(response.json()['floatchoice'], 42.42)
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(response.json()['intchoice'], 5)
+            self.assertEqual(response.json()['strchoice'], 'foo')
+            self.assertEqual(response.json()['floatchoice'], 42.42)
 
     def test_choices_docrequest_shpinx(self):
-        endpoint = self.path + "/choices-docrequest-sphinx"
+        for response_func in self.response_funcs():
+            endpoint = self.path + "/choices-docrequest-sphinx"
 
-        response = requests.get(endpoint, params={'intchoice': '5',
-                                                  'strchoice': 'foo',
-                                                  'floatchoice': '42.42'})
+            response = response_func(endpoint, {'intchoice': '5',
+                                                'strchoice': 'foo',
+                                                'floatchoice': '42.42'})
 
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json()['intchoice'], 5)
-        self.assertEqual(response.json()['strchoice'], 'foo')
-        self.assertEqual(response.json()['floatchoice'], 42.42)
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(response.json()['intchoice'], 5)
+            self.assertEqual(response.json()['strchoice'], 'foo')
+            self.assertEqual(response.json()['floatchoice'], 42.42)
 
     def test_list_docrequest(self):
-        endpoint = self.path + "/list-docrequest"
+        for response_func in self.response_funcs():
+            endpoint = self.path + "/list-docrequest"
 
-        response = requests.get(endpoint, params={'intlist': ['5', '6'],
-                                                  'strlist': ['foo', 'bar'],  # TODO test with one element
-                                                  'floatlist': ['42.42', '39.39']})
+            response = response_func(endpoint, {'intlist': ['5', '6'],
+                                                'strlist': ['foo', 'bar'],  # TODO test with one element
+                                                'floatlist': ['42.42', '39.39']})
 
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json()['intlist'], [5, 6])
-        self.assertEqual(response.json()['strlist'], ['foo', 'bar'])
-        self.assertEqual(response.json()['floatlist'], [42.42, 39.39])
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(response.json()['intlist'], [5, 6])
+            self.assertEqual(response.json()['strlist'], ['foo', 'bar'])
+            self.assertEqual(response.json()['floatlist'], [42.42, 39.39])
 
     def test_list_docrequest_sphinx(self):
-        endpoint = self.path + "/list-docrequest-sphinx"
+        for response_func in self.response_funcs():
+            endpoint = self.path + "/list-docrequest-sphinx"
 
-        response = requests.get(endpoint, params={'intlist': ['5', '6'],
-                                                  'strlist': ['foo', 'bar'], # TODO test with one element
-                                                  'floatlist': ['42.42', '39.39']})
+            response = response_func(endpoint, {'intlist': ['5', '6'],
+                                                'strlist': ['foo', 'bar'], # TODO test with one element
+                                                'floatlist': ['42.42', '39.39']})
 
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json()['intlist'], [5, 6])
-        self.assertEqual(response.json()['strlist'], ['foo', 'bar'])
-        self.assertEqual(response.json()['floatlist'], [42.42, 39.39])
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(response.json()['intlist'], [5, 6])
+            self.assertEqual(response.json()['strlist'], ['foo', 'bar'])
+            self.assertEqual(response.json()['floatlist'], [42.42, 39.39])
 
 
 class DjangoIntegrationTest(TestBase, unittest.TestCase):
