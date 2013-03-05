@@ -6,13 +6,13 @@ import colander
 
 SCHEMA_TYPE_MAPPINGS = {
     'int': {'colander_class': colander.Int,
-            'to_python': lambda x: int(x) },
+            'to_python': lambda x: int(x)},
 
     'str': {'colander_class': colander.Str,
-            'to_python': lambda x: str(x) },
+            'to_python': lambda x: str(x)},
 
     'float': {'colander_class': colander.Float,
-              'to_python': lambda x: float(x) },
+              'to_python': lambda x: float(x)},
 }
 
 docrequest_type = (pyparsing.Keyword('int') | pyparsing.Keyword('str') | pyparsing.Keyword('float'))\
@@ -27,7 +27,7 @@ docrequest_description = pyparsing.OneOrMore(pyparsing.Word(initChars=pyparsing.
     .setResultsName('docrequest_definition')
 docrequest_variable = pyparsing.Word(initChars=pyparsing.alphas, bodyChars=pyparsing.alphanums)\
     .setResultsName('docrequest_variable')
-docrequest_schema =  (docrequest_list_type|docrequest_type_with_choices|docrequest_type)
+docrequest_schema = (docrequest_list_type|docrequest_type_with_choices|docrequest_type)
 
 docrequest_sphinx = pyparsing.Literal(":") + "param" + docrequest_schema + docrequest_variable + ":" + docrequest_description
 docrequest_docrequest = pyparsing.Literal("-") + docrequest_variable + ":" + docrequest_schema
@@ -83,7 +83,7 @@ class DjangoFrameworkAdapter(object):
         else:
             raise NotImplementedError("Unsupported HTTP method {}".format(request.method))
 
-        return params.dict()
+        return {key: values[0] if len(values) == 1 else values for key, values in params.lists()}
     
 
 class DocRequest(object):
@@ -132,6 +132,9 @@ class DocRequest(object):
                     schema.add(schema_node_for_line(line))
 
                 params = self.framework.get_params_from_request(request)
+                print("*" * 80)
+                print(params)
+                print("*" * 80)
                 args = schema.deserialize(params)
 
                 context = original_func(request, **args)  # TODO support for args, defaults, etc

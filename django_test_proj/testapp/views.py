@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from docrequest import docrequest_django as docrequest
 from docrequest import readable_type
 
+
+@csrf_exempt
 @docrequest
 def decorated_without_definitions(request):
     """
@@ -15,6 +17,7 @@ def decorated_without_definitions(request):
     This should run just like normal.
     """
     return HttpResponse("Hello World", content_type="text/plain")
+
 
 @csrf_exempt
 @docrequest
@@ -32,6 +35,7 @@ def simple_docrequest(request, value1, value2):
                                       'type': readable_type(value2)}})
 
     return HttpResponse(response, content_type="application/json")
+
 
 @csrf_exempt
 @docrequest
@@ -52,6 +56,7 @@ def simple_docrequest_sphinx(request, value1, value2):
     return HttpResponse(response, content_type="application/json")
 
 
+@csrf_exempt
 @docrequest
 def choices_docrequest(request, intchoice, strchoice, floatchoice):
     """
@@ -67,6 +72,7 @@ def choices_docrequest(request, intchoice, strchoice, floatchoice):
                                     'floatchoice': floatchoice}), content_type="application/json")
 
 
+@csrf_exempt
 @docrequest
 def choices_docrequest_sphinx(request, intchoice, strchoice, floatchoice):
     """
@@ -83,6 +89,7 @@ def choices_docrequest_sphinx(request, intchoice, strchoice, floatchoice):
                                     'floatchoice': floatchoice}), content_type="application/json")
 
 
+@csrf_exempt
 @docrequest
 def list_docrequest(request, intlist, strlist, floatlist):
     """
@@ -98,6 +105,7 @@ def list_docrequest(request, intlist, strlist, floatlist):
                                     'floatlist': floatlist}), content_type="application/json")
 
 
+@csrf_exempt
 @docrequest
 def list_docrequest_sphinx(request, intlist, strlist, floatlist):
     """
