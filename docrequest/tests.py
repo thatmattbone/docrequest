@@ -4,15 +4,16 @@ Tests.
 import unittest
 
 from docrequest import schema_node_for_line
+from docrequest import docrequest_django
 
 import colander
+
 
 class TestSchemaGeneration(unittest.TestCase):
     
     def test_failure(self):
         line = "invalid"
         self.assertRaises(Exception, lambda: schema_node_for_line(line))
-
 
     def test_missing_mapping(self):
         lines = ["  - foobar:fizzle",
@@ -21,11 +22,9 @@ class TestSchemaGeneration(unittest.TestCase):
         for line in lines:
             self.assertRaises(Exception, lambda: schema_node_for_line(line))
 
-
     def test_int(self):
         lines = ["  - value1:int",
-                 " :param int value1: my description"
-        ]
+                 " :param int value1: my description"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -34,11 +33,9 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertIsInstance(schema_node.typ, colander.Int)
             self.assertEqual(schema_node.name, "value1")
 
-
     def test_str(self):
         lines = ["  - value2:str",
-                 " :param str value2: my description"
-        ]
+                 " :param str value2: my description"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -46,7 +43,6 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertIsInstance(schema_node, colander.SchemaNode)
             self.assertIsInstance(schema_node.typ, colander.Str)
             self.assertEqual(schema_node.name, "value2")
-
 
     def test_float(self):
         lines = ["  - myfloat:float",
@@ -109,6 +105,21 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertIsInstance(schema_node.validator, colander.OneOf)
             self.assertEqual(schema_node.validator.choices, [42.42, 39.39, 52.52])
             self.assertEqual(schema_node.name, "myfloatchoices")
+
+
+def stub_view(self):
+    """This is my docstring."""
+
+
+class TestDecorators(unittest.TestCase):
+
+    def test_name_preserved(self):
+        decorated_view = docrequest_django(stub_view)
+        self.assertEqual(decorated_view.__name__, stub_view.__name__)
+
+    def test_docstring_preserved(self):
+        decorated_view = docrequest_django(stub_view)
+        self.assertEqual(decorated_view.__doc__, stub_view.__doc__)
 
 
 if __name__ == "__main__":

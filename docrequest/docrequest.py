@@ -1,5 +1,5 @@
 import inspect
-import re
+from functools import wraps
 
 import pyparsing
 import colander
@@ -105,7 +105,8 @@ class DocRequest(object):
 
         if not inspect.isfunction(original_func):
             raise Exception("""{func} is not a function.""".format(func=original_func))
-        
+
+        @wraps(original_func)
         def new_func(request):
             docstring = original_func.__doc__
             if docstring is not None:
@@ -139,11 +140,6 @@ class DocRequest(object):
                 context = original_func(request)
 
             return context
-
-        #TODO replace with functools wraps?
-        new_func.__name__ = original_func.__name__
-        new_func.__doc__ = original_func.__doc__
-        new_func.__dict__.update(original_func.__dict__)
 
         return new_func
 

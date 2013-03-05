@@ -12,10 +12,6 @@ import os
 
 import requests
 
-if sys.version_info.major == 3:
-    STR_CLASS = 'str'
-else:
-    STR_CLASS = 'unicode'
 
 class TestBase(object):
 
