@@ -70,7 +70,7 @@ class PyramidFrameworkAdapter(object):
         else:
             raise NotImplementedError("Unsupported HTTP method {}".format(request.method))
 
-        return params
+        return params.mixed()
 
 
 class DjangoFrameworkAdapter(object):

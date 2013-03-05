@@ -95,8 +95,8 @@ def list_docrequest(request, intlist, strlist, floatlist):
     """
     return {'intlist': intlist,
             'strlist': strlist,
-            'floatlist': floatlist
-    }
+            'floatlist': floatlist,
+            }
 
 
 @view_config(route_name='list_docrequest_sphinx', renderer='json')
@@ -111,6 +111,7 @@ def list_docrequest_sphinx(request, intlist, strlist, floatlist):
     :param [str] strlist: a str
     :param [float] floatlist: a float
     """
+
     return {'intlist': intlist,
             'strlist': strlist,
             'floatlist': floatlist}
