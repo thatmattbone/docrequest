@@ -132,9 +132,6 @@ class DocRequest(object):
                     schema.add(schema_node_for_line(line))
 
                 params = self.framework.get_params_from_request(request)
-                print("*" * 80)
-                print(params)
-                print("*" * 80)
                 args = schema.deserialize(params)
 
                 context = original_func(request, **args)  # TODO support for args, defaults, etc
