@@ -120,3 +120,29 @@ def list_docrequest_sphinx(request, intlist, strlist, floatlist):
     return HttpResponse(json.dumps({'intlist': intlist,
                                     'strlist': strlist,
                                     'floatlist': floatlist}), content_type="application/json")
+
+
+@csrf_exempt
+@docrequest
+def with_url_param(request, url_param, testint):
+    """
+    Mixin' with url parameters.
+
+    docrequest:
+      - testint:int
+    """
+    return HttpResponse(json.dumps({'url_param': url_param,
+                                    'testint': testint}))
+
+@csrf_exempt
+def with_multiple_url_params(request, param1, param2):
+    """
+    Mixin' with url parameters.
+
+    docrequest:
+      - testint:int
+    """
+    return HttpResponse(json.dumps({'param1': param1,
+                                    'param2': param2,
+                                    #'testint': testint
+                                    }))

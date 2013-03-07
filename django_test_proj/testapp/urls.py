@@ -12,4 +12,7 @@ urlpatterns = patterns('',
 
     url(r'^list-docrequest-sphinx$', 'testapp.views.list_docrequest_sphinx'),
     url(r'^list-docrequest$', 'testapp.views.list_docrequest'),
+
+    url(r'^with-url-param/(?P<url_param>\d+)$', 'testapp.views.with_url_param'),
+    url(r'^with-multiple-url-params/(?P<param2>\d+)/(?P<param1>\d+)$', 'testapp.views.with_multiple_url_params'),
 )

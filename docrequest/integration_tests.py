@@ -141,6 +141,15 @@ class TestBase(object):
             self.assertEqual(response.json()['strlist'], ['foo', 'bar'])
             self.assertEqual(response.json()['floatlist'], [42.42, 39.39])
 
+    def test_with_url_param(self):
+        endpoint = self.path + "/with-url-param/5"
+
+        response = requests.get(endpoint, param={'testint': 4})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.json()['testint'], 4)
+        self.assertEqual(response.json()['urlparam'], 5)
+
 
 class DjangoIntegrationTest(TestBase, unittest.TestCase):
 

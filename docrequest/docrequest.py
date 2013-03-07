@@ -107,7 +107,7 @@ class DocRequest(object):
             raise Exception("""{func} is not a function.""".format(func=original_func))
 
         @wraps(original_func)
-        def new_func(request):
+        def new_func(request, *remaining_args, **remaining_kwargs):
             docstring = original_func.__doc__
             if docstring is not None:
                 docstring = [line.strip() for line in docstring.split("\n")]
@@ -134,7 +134,8 @@ class DocRequest(object):
                 params = self.framework.get_params_from_request(request)
                 args = schema.deserialize(params)
 
-                context = original_func(request, **args)  # TODO support for args, defaults, etc
+                args.update(remaining_kwargs)
+                context = original_func(request, *remaining_args, **args)
 
             else:
                 context = original_func(request)
