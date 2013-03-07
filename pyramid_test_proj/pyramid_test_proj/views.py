@@ -115,3 +115,16 @@ def list_docrequest_sphinx(request, intlist, strlist, floatlist):
     return {'intlist': intlist,
             'strlist': strlist,
             'floatlist': floatlist}
+
+
+@view_config(route_name='with_url_param', renderer='json')
+@docrequest
+def with_url_param(request, testint):
+    """
+    Mixin' with url parameters.
+
+    docrequest:
+      - testint:int
+    """
+    return {'url_param': int(request.matchdict['url_param']),
+            'testint': testint}

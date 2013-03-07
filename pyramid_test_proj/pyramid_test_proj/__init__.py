@@ -18,5 +18,7 @@ def main(global_config, **settings):
     config.add_route('list_docrequest', '/list-docrequest')
     config.add_route('list_docrequest_sphinx', '/list-docrequest-sphinx')
 
+    config.add_route('with_url_param', '/with-url-param/{url_param}')
+
     config.scan()
     return config.make_wsgi_app()

@@ -131,8 +131,9 @@ def with_url_param(request, url_param, testint):
     docrequest:
       - testint:int
     """
-    return HttpResponse(json.dumps({'url_param': url_param,
+    return HttpResponse(json.dumps({'url_param': int(url_param),
                                     'testint': testint}))
+
 
 @csrf_exempt
 def with_multiple_url_params(request, param1, param2):
