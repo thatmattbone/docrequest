@@ -72,39 +72,9 @@ class TestBase(object):
                                                 'value2': 'two'})
             self.assertEqual(500, response.status_code)
 
-    def test_simple_docrequest_sphinx(self):
-        for response_func in self.response_funcs():
-            endpoint = self.path + "/simple-docrequest-sphinx"
-
-            response = response_func(endpoint, {'value1': '1',
-                                                'value2': 'two'})
-            self.assertEqual(200, response.status_code)
-            self.assertEqual(response.json(),
-                             {'value1': {'value': 1,
-                                         'type': 'int'},
-                              'value2': {'value': u'two',
-                                         'type': 'str'}})
-
-            response = response_func(endpoint, {'value1': 'one',
-                                                'value2': '2'})
-            self.assertEqual(500, response.status_code)
-
     def test_choices_docrequest(self):
         for response_func in self.response_funcs():
             endpoint = self.path + "/choices-docrequest"
-
-            response = response_func(endpoint, {'intchoice': '5',
-                                                'strchoice': 'foo',
-                                                'floatchoice': '42.42'})
-
-            self.assertEqual(200, response.status_code)
-            self.assertEqual(response.json()['intchoice'], 5)
-            self.assertEqual(response.json()['strchoice'], 'foo')
-            self.assertEqual(response.json()['floatchoice'], 42.42)
-
-    def test_choices_docrequest_shpinx(self):
-        for response_func in self.response_funcs():
-            endpoint = self.path + "/choices-docrequest-sphinx"
 
             response = response_func(endpoint, {'intchoice': '5',
                                                 'strchoice': 'foo',
@@ -121,19 +91,6 @@ class TestBase(object):
 
             response = response_func(endpoint, {'intlist': ['5', '6'],
                                                 'strlist': ['foo', 'bar'],  # TODO test with one element
-                                                'floatlist': ['42.42', '39.39']})
-
-            self.assertEqual(200, response.status_code)
-            self.assertEqual(response.json()['intlist'], [5, 6])
-            self.assertEqual(response.json()['strlist'], ['foo', 'bar'])
-            self.assertEqual(response.json()['floatlist'], [42.42, 39.39])
-
-    def test_list_docrequest_sphinx(self):
-        for response_func in self.response_funcs():
-            endpoint = self.path + "/list-docrequest-sphinx"
-
-            response = response_func(endpoint, {'intlist': ['5', '6'],
-                                                'strlist': ['foo', 'bar'], # TODO test with one element
                                                 'floatlist': ['42.42', '39.39']})
 
             self.assertEqual(200, response.status_code)
@@ -163,7 +120,3 @@ class PyramidIntegrationTest(TestBase, unittest.TestCase):
     path = "http://localhost:6543"
     args = ["pserve.py", "development.ini"]
     cwd = "../pyramid_test_proj"
-
-
-if __name__ == "__main__":
-    unittest.main()

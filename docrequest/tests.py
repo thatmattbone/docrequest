@@ -16,15 +16,13 @@ class TestSchemaGeneration(unittest.TestCase):
         self.assertRaises(Exception, lambda: schema_node_for_line(line))
 
     def test_missing_mapping(self):
-        lines = ["  - foobar:fizzle",
-                 " :param foobar fizzle: my description"]
+        lines = [" :param foobar fizzle: my description"]
 
         for line in lines:
             self.assertRaises(Exception, lambda: schema_node_for_line(line))
 
     def test_int(self):
-        lines = ["  - value1:int",
-                 " :param int value1: my description"]
+        lines = [" :param int value1: my description"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -34,8 +32,7 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertEqual(schema_node.name, "value1")
 
     def test_str(self):
-        lines = ["  - value2:str",
-                 " :param str value2: my description"]
+        lines = [" :param str value2: my description"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -45,8 +42,7 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertEqual(schema_node.name, "value2")
 
     def test_float(self):
-        lines = ["  - myfloat:float",
-                 " :param float myfloat: my description"]
+        lines = [" :param float myfloat: my description"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -56,8 +52,7 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertEqual(schema_node.name, "myfloat")
 
     def test_list_int(self):
-        lines = [" - myintlist:[int]",
-                 ":param [int] myintlist: my integer list"]
+        lines = [":param [int] myintlist: my integer list"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -68,8 +63,7 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertEqual(schema_node.name, "myintlist")
 
     def test_choices_int(self):
-        lines = [" - myintchoices:int<1,2,3>",
-                 ":param int<1,2,3> myintchoices: my integer choices"]
+        lines = [":param int<1,2,3> myintchoices: my integer choices"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -81,8 +75,7 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertEqual(schema_node.name, "myintchoices")
 
     def test_choices_str(self):
-        lines = [" - mystrchoices:str<foo, bar, baz>",
-                 ":param str<foo, bar, baz> mystrchoices: my string choices"]
+        lines = [":param str<foo, bar, baz> mystrchoices: my string choices"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -94,8 +87,7 @@ class TestSchemaGeneration(unittest.TestCase):
             self.assertEqual(schema_node.name, "mystrchoices")
 
     def test_choices_float(self):
-        lines = [" - myfloatchoices:float<42.42, 39.39, 52.52>",
-                 ":param float<42.42, 39.39, 52.52> myfloatchoices: my float choices"]
+        lines = [":param float<42.42, 39.39, 52.52> myfloatchoices: my float choices"]
 
         for line in lines:
             schema_node = schema_node_for_line(line)
@@ -121,6 +113,3 @@ class TestDecorators(unittest.TestCase):
         decorated_view = docrequest_django(stub_view)
         self.assertEqual(decorated_view.__doc__, stub_view.__doc__)
 
-
-if __name__ == "__main__":
-    unittest.main()

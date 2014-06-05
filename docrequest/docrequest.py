@@ -30,9 +30,8 @@ docrequest_variable = pyparsing.Word(initChars=pyparsing.alphas, bodyChars=pypar
 docrequest_schema = (docrequest_list_type|docrequest_type_with_choices|docrequest_type)
 
 docrequest_sphinx = pyparsing.Literal(":") + "param" + docrequest_schema + docrequest_variable + ":" + docrequest_description
-docrequest_docrequest = pyparsing.Literal("-") + docrequest_variable + ":" + docrequest_schema
 
-docrequest_grammar = docrequest_sphinx|docrequest_docrequest
+docrequest_grammar = docrequest_sphinx
 
 
 def schema_node_for_line(line):
@@ -88,7 +87,7 @@ class DjangoFrameworkAdapter(object):
 
 class DocRequest(object):
 
-    def __init__(self, framework="pyramid"):
+    def __init__(self, framework):
 
         framework_adapters = {'pyramid': PyramidFrameworkAdapter,
                               'django': DjangoFrameworkAdapter}
