@@ -8,3 +8,5 @@ env3
 redis/redis-*
 Django*
 pyramid_test_proj/doc/_build
+.tox
+docrequest/MANIFEST

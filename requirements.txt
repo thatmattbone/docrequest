@@ -20,5 +20,5 @@ venusian==1.0a7
 waitress==0.8.2
 zope.deprecation==4.0.2
 zope.interface==4.0.3
-Flask==0.9
--e docrequest
+# Flask==0.9
+# -e docrequest
