@@ -60,6 +60,9 @@ def schema_node_for_line(line):
 
 
 class PyramidFrameworkAdapter(object):
+    def get_request(self, view_args):
+        return view_args[0]
+
     def get_params_from_request(self, request):
         params = None
         if request.method == 'POST':
@@ -73,6 +76,9 @@ class PyramidFrameworkAdapter(object):
 
 
 class DjangoFrameworkAdapter(object):
+    def get_request(self, view_args):
+        return view_args[0]
+
     def get_params_from_request(self, request):
         params = None
         if request.method == 'POST':
@@ -86,22 +92,17 @@ class DjangoFrameworkAdapter(object):
 
 
 class FlaskFrameworkAdapter(object):
-    def get_params_from_request(self, request):
-        params = None
-        if request.method == 'POST':
-            params = request.POST
-        elif request.method == 'GET':
-            params = request.GET
-        else:
-            raise NotImplementedError("Unsupported HTTP method {}".format(request.method))
+    def get_request(self, view_args):
+        from flask import request
+        return request
 
-        return {key: values[0] if len(values) == 1 else values for key, values in params.lists()}
+    def get_params_from_request(self, request):
+        return {key: values[0] if len(values) == 1 else values for key, values in request.args.items()}
 
 
 class DocRequest(object):
 
     def __init__(self, framework):
-
         framework_adapters = {'pyramid': PyramidFrameworkAdapter,
                               'django': DjangoFrameworkAdapter,
                               'flask': FlaskFrameworkAdapter,
@@ -121,7 +122,9 @@ class DocRequest(object):
             raise Exception("""{func} is not a function.""".format(func=original_func))
 
         @wraps(original_func)
-        def new_func(request, *remaining_args, **remaining_kwargs):
+        def new_func(*args, **kwargs):
+            request = self.framework.get_request(args)
+
             docstring = original_func.__doc__
             if docstring is not None:
                 docstring = [line.strip() for line in docstring.split("\n")]
@@ -146,13 +149,13 @@ class DocRequest(object):
                     schema.add(schema_node_for_line(line))
 
                 params = self.framework.get_params_from_request(request)
-                args = schema.deserialize(params)
+                inflated_params = schema.deserialize(params)
 
-                args.update(remaining_kwargs)
-                context = original_func(request, *remaining_args, **args)
+                inflated_params.update(kwargs)
+                context = original_func(*args, **inflated_params)
 
             else:
-                context = original_func(request)
+                context = original_func(*args, **kwargs)
 
             return context
 

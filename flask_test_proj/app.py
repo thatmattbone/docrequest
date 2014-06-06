@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 
-@app.route("/decorated-without-definitions")
+@app.route("/decorated-without-definitions", methods=['GET', 'POST'])
 @docrequest
 def decorated_without_definitions():
     """
@@ -16,7 +16,7 @@ def decorated_without_definitions():
     return "Hello World"
 
 
-@app.route("/simple-docrequest")
+@app.route("/simple-docrequest", methods=['GET', 'POST'])
 @docrequest
 def simple_docrequest(value1, value2):
     """
@@ -33,7 +33,7 @@ def simple_docrequest(value1, value2):
                                'type': readable_type(value2)}})
 
 
-@app.route("/choices-docrequest")
+@app.route("/choices-docrequest", methods=['GET', 'POST'])
 @docrequest
 def choices_docrequest(intchoice, strchoice, floatchoice):
     """
@@ -50,7 +50,7 @@ def choices_docrequest(intchoice, strchoice, floatchoice):
                     'floatchoice': floatchoice})
 
 
-@app.route("/list-docrequest")
+@app.route("/list-docrequest", methods=['GET', 'POST'])
 @docrequest
 def list_docrequest(intlist, strlist, floatlist):
     """
@@ -67,7 +67,7 @@ def list_docrequest(intlist, strlist, floatlist):
                     'floatlist': floatlist})
 
 
-@app.route("/with-url-param/{url_param}")
+@app.route("/with-url-param/{url_param}", methods=['GET', 'POST'])
 @docrequest
 def with_url_param(url_param, testint):
     """
@@ -97,4 +97,5 @@ def with_url_param(url_param, testint):
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.run()
