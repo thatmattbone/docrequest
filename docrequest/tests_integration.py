@@ -118,3 +118,9 @@ class PyramidIntegrationTest(TestBase, unittest.TestCase):
     path = "http://localhost:6543"
     args = ["pserve.py", "development.ini"]
     cwd = "../pyramid_test_proj"
+
+
+class FlaskIntegrationTest(TestBase, unittest.TestCase):
+    path = "http://localhost:5000"
+    args = ["app.py"]
+    cwd = "../flask_test_proj"

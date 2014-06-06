@@ -1,6 +1,9 @@
 pyramid==1.5.1
-colander==0.9.9
+Flask==0.10.1
 Django==1.6.5
-requests==2.3.0
+
+colander==0.9.9
 pyparsing==2.0.2
+
+requests==2.3.0
 -e ../pyramid_test_proj
