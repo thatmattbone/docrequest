@@ -83,14 +83,29 @@ class DjangoFrameworkAdapter(object):
             raise NotImplementedError("Unsupported HTTP method {}".format(request.method))
 
         return {key: values[0] if len(values) == 1 else values for key, values in params.lists()}
-    
+
+
+class FlaskFrameworkAdapter(object):
+    def get_params_from_request(self, request):
+        params = None
+        if request.method == 'POST':
+            params = request.POST
+        elif request.method == 'GET':
+            params = request.GET
+        else:
+            raise NotImplementedError("Unsupported HTTP method {}".format(request.method))
+
+        return {key: values[0] if len(values) == 1 else values for key, values in params.lists()}
+
 
 class DocRequest(object):
 
     def __init__(self, framework):
 
         framework_adapters = {'pyramid': PyramidFrameworkAdapter,
-                              'django': DjangoFrameworkAdapter}
+                              'django': DjangoFrameworkAdapter,
+                              'flask': FlaskFrameworkAdapter,
+                              }
 
         if framework in framework_adapters:
             self.framework = framework_adapters[framework]()
@@ -145,6 +160,7 @@ class DocRequest(object):
 
 docrequest_pyramid = DocRequest(framework="pyramid")
 docrequest_django = DocRequest(framework="django")
+docrequest_flask = DocRequest(framework="flask")
 
 
 def readable_type(obj):
