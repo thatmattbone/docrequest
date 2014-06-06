@@ -14,7 +14,6 @@ import requests
 
 
 class TestBase(object):
-
     MAX_TRIES = 10
 
     @classmethod
@@ -22,8 +21,9 @@ class TestBase(object):
         # fork off our framework's dev server
         cls.pid = subprocess.Popen([sys.executable] + cls.args,
                                    cwd=cls.cwd,
-                                   stdout=open(os.devnull, 'w'),
-                                   stderr=open(os.devnull, 'w'))
+                                   stdout=sys.stdout,
+                                   stderr=sys.stderr,
+                                   )
 
         # try to request the root url MAX_TRIES times to make sure the dev server has started
         for i in range(cls.MAX_TRIES):
@@ -98,25 +98,23 @@ class TestBase(object):
             self.assertEqual(response.json()['strlist'], ['foo', 'bar'])
             self.assertEqual(response.json()['floatlist'], [42.42, 39.39])
 
-    def test_with_url_param(self):
-        endpoint = self.path + "/with-url-param/5"
-
-        response = requests.get(endpoint, params={'testint': 4})
-
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json()['testint'], 4)
-        self.assertEqual(response.json()['url_param'], 5)
+    # def test_with_url_param(self):
+    #     endpoint = self.path + "/with-url-param/5"
+    #
+    #     response = requests.get(endpoint, params={'testint': 4})
+    #
+    #     self.assertEqual(200, response.status_code)
+    #     self.assertEqual(response.json()['testint'], 4)
+    #     self.assertEqual(response.json()['url_param'], 5)
 
 
 class DjangoIntegrationTest(TestBase, unittest.TestCase):
-
     path = "http://localhost:8000"
     args = ["manage.py", "runserver", "--noreload"]
     cwd = "../django_test_proj"
 
 
 class PyramidIntegrationTest(TestBase, unittest.TestCase):
-
     path = "http://localhost:6543"
     args = ["pserve.py", "development.ini"]
     cwd = "../pyramid_test_proj"

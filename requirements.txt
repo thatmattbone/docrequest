@@ -14,11 +14,12 @@ pyparsing==1.5.6
 pyramid==1.4
 pyramid-debugtoolbar==1.0.3
 repoze.lru==0.6
-requests==1.1.0
+requests==2.3.0
 translationstring==1.1
 venusian==1.0a7
 waitress==0.8.2
 zope.deprecation==4.0.2
 zope.interface==4.0.3
+-e ../pyramid_test_proj
 # Flask==0.9
 # -e docrequest

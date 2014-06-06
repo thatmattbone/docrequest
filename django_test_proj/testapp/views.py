@@ -87,7 +87,8 @@ def with_url_param(request, url_param, testint):
 
 
 @csrf_exempt
-def with_multiple_url_params(request, param1, param2):
+@docrequest
+def with_multiple_url_params(request, param1, param2, testint):
     """
     Mixin' with url parameters.
 
@@ -97,5 +98,5 @@ def with_multiple_url_params(request, param1, param2):
     """
     return HttpResponse(json.dumps({'param1': param1,
                                     'param2': param2,
-                                    #'testint': testint
+                                    'testint': testint
                                     }))

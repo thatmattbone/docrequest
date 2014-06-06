@@ -20,23 +20,7 @@ def decorated_without_definitions(request):
 @docrequest
 def simple_docrequest(request, value1, value2):
     """
-    Simple example using docrequest syntax.
-
-    docrequest:
-      - value1:int
-      - value2:str
-    """
-    return {'value1': {'value': value1,
-                       'type': readable_type(value1)},
-            'value2': {'value': value2,
-                       'type': readable_type(value2)}}
-
-
-@view_config(route_name='simple_docrequest_sphinx', renderer='json')
-@docrequest
-def simple_docrequest_sphinx(request, value1, value2):
-    """
-    Simple example using sphinx syntax.
+    Simple example.
 
     docrequest:
 
@@ -53,23 +37,7 @@ def simple_docrequest_sphinx(request, value1, value2):
 @docrequest
 def choices_docrequest(request, intchoice, strchoice, floatchoice):
     """
-    Demonstrating the docrequest choices syntax.
-
-    docrequest:
-     - intchoice:int<2,3,5,7>
-     - strchoice:str<foo, bar, baz>
-     - floatchoice:float<39.39, 42.42>
-    """
-    return {'intchoice': intchoice,
-            'strchoice': strchoice,
-            'floatchoice': floatchoice}
-
-
-@view_config(route_name='choices_docrequest_sphinx', renderer='json')
-@docrequest
-def choices_docrequest_sphinx(request, intchoice, strchoice, floatchoice):
-    """
-    Demonstrating the choices syntax, sphinx version.
+    Demonstrating the choices syntax.
 
     docrequest:
 
@@ -86,24 +54,7 @@ def choices_docrequest_sphinx(request, intchoice, strchoice, floatchoice):
 @docrequest
 def list_docrequest(request, intlist, strlist, floatlist):
     """
-    Demonstrating the list syntax, sphinx version.
-
-    docrequest:
-     - intlist:[int]
-     - strlist:[str]
-     - floatlist:[float]
-    """
-    return {'intlist': intlist,
-            'strlist': strlist,
-            'floatlist': floatlist,
-            }
-
-
-@view_config(route_name='list_docrequest_sphinx', renderer='json')
-@docrequest
-def list_docrequest_sphinx(request, intlist, strlist, floatlist):
-    """
-    Demonstrating the list syntax, sphinx version.
+    Demonstrating the list syntax.
 
     docrequest:
 

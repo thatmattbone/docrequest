@@ -10,13 +10,10 @@ def main(global_config, **settings):
     config.add_route('decorated_without_definitions', '/decorated-without-definitions')
 
     config.add_route('simple_docrequest', '/simple-docrequest')
-    config.add_route('simple_docrequest_sphinx', '/simple-docrequest-sphinx')
 
     config.add_route('choices_docrequest', '/choices-docrequest')
-    config.add_route('choices_docrequest_sphinx', '/choices-docrequest-sphinx')
 
     config.add_route('list_docrequest', '/list-docrequest')
-    config.add_route('list_docrequest_sphinx', '/list-docrequest-sphinx')
 
     config.add_route('with_url_param', '/with-url-param/{url_param}')
 
